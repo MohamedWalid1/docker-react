@@ -7,3 +7,24 @@ before_install:
 
 script:
   - docker run -e CI=true mohamedwaleed/docker-react npm run test
+
+deploy:
+- provider: s3
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY
+  local_dir: dpl_cd_upload
+  skip_cleanup: true
+  on: &2
+    repo: mohamedwaleed/docker-react
+  bucket: spotify-5-bucket
+  region: us-west-1
+- provider: codedeploy
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY
+  bucket: spotify-5-bucket
+  key: latest.zip
+  bundle_type: zip
+  application: Spotify-5
+  deployment_group: spotify5
+  region: us-west-1
+  on: *2
